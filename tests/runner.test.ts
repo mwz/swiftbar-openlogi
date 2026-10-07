@@ -1,5 +1,5 @@
 import { describe, it, expect, afterEach } from 'vitest';
-import { mkdtemp, writeFile, rm, symlink, readFile } from 'node:fs/promises';
+import { mkdtemp, writeFile, rm, symlink, readFile, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -75,7 +75,8 @@ describe('macOS executable discovery', () => {
   it('supports user-local executables and Homebrew-style symlinks', async () => {
     const dir = await temp(); const binary = path.join(dir, 'openlogi'); const link = path.join(dir, 'link');
     await writeFile(binary, '#!/bin/sh\nexit 0\n', { mode: 0o755 }); await symlink(binary, link);
-    expect(resolveExecutable(link)).toBe(binary);
+    // macOS /var itself is a symlink to /private/var.
+    expect(resolveExecutable(link)).toBe(await realpath(binary));
     expect(() => resolveExecutable('relative/openlogi')).toThrow();
     expect(() => resolveExecutable(path.join(dir, 'missing'))).toThrow();
   });
