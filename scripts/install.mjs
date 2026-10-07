@@ -37,7 +37,7 @@ async function atomicWrite(file, contents, mode = 0o600) {
 }
 
 async function main() {
-  if (Number(process.versions.node.split('.')[0]) < 22) throw new Error('Node 22 or later is required');
+  if (Number(process.versions.node.split('.')[0]) < 24) throw new Error('Node 24 or later is required');
   if (!values['plugin-dir']) throw new Error('Specify the folder selected in SwiftBar using --plugin-dir');
   const requested = path.resolve(expand(values['plugin-dir']));
   await mkdir(requested, { recursive: true });
@@ -60,7 +60,7 @@ async function main() {
   }
   node = await executable(values.node ?? node);
   const major = Number(execFileSync(node, ['-p', 'process.versions.node.split(".")[0]'], { encoding: 'utf8' }).trim());
-  if (!Number.isFinite(major) || major < 22) throw new Error('Selected Node runtime must be version 22 or later');
+  if (!Number.isFinite(major) || major < 24) throw new Error('Selected Node runtime must be version 24 or later');
   const savedConfig = await readOptional(path.join(support, 'config.json'));
   const config = savedConfig ? JSON.parse(savedConfig) : {};
   if (values.openlogi) config.openlogiPath = await executable(values.openlogi);

@@ -12,7 +12,7 @@ types, battery percentages and charging states.
 ## Requirements
 
 - macOS 12 or later and SwiftBar 2.1.1 or later.
-- Node.js 22 or later (also available through Homebrew).
+- Node.js 24 or later (local development uses the LTS version pinned in mise).
 - A working standalone `openlogi` executable supporting `openlogi list`.
 
 The OpenLogi desktop app does not necessarily install the standalone CLI.
@@ -71,7 +71,7 @@ than silently selecting another executable.
 
 The installer captures an absolute Node path, preferring a stable Homebrew
 symlink when it points to the current interpreter. Use `--node /absolute/path`
-to select another Node 22+ executable. No fish, mise, zsh or bash initialisation
+to select another Node 24+ executable. No fish, mise, zsh or bash initialisation
 is needed. If a version-manager upgrade removes that executable, rerun the
 installer. A missing Node runtime is reported in the menu.
 
@@ -155,7 +155,7 @@ mise exec -- pnpm run check
 updated, and **pnpm 12.9.1**. The `packageManager` field in `package.json` pins the
 same pnpm version. Exact pins keep local development and CI reproducible; they
 do not silently switch to a newer Node release. The runtime still supports Node
-22 or later.
+24 or later.
 
 With mise activated in your shell, you can use `pnpm` directly. `mise exec --`
 also works without shell activation. To deliberately update Node to the newest
@@ -164,8 +164,10 @@ the pnpm version in `mise.toml` and `package.json` aligned when updating it.
 
 TypeScript builds to `dist/`. Tests cover parsing, limits, menu syntax, process
 cleanup, coalescing, stale sockets, installation, and the installed launcher.
-GitHub Actions uses the same mise pins on Linux and macOS, and also tests Node 22
-compatibility. Dependency installation uses the committed `pnpm-lock.yaml` in
+GitHub Actions uses the same mise pins on Linux and macOS, and also tests the
+latest stable Node release using `node@latest` for forward compatibility. The
+latest-release jobs follow new releases automatically, without changing the
+local LTS pin. Dependency installation uses the committed `pnpm-lock.yaml` in
 frozen-lockfile mode.
 Synthetic tests do not require Logitech hardware.
 

@@ -6,7 +6,7 @@
   "type": "module",
   "license": "MIT",
   "engines": {
-    "node": ">=22"
+    "node": ">=24"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
@@ -17,7 +17,7 @@
     "uninstall-plugin": "node scripts/install.mjs --uninstall"
   },
   "devDependencies": {
-    "@types/node": "22.19.17",
+    "@types/node": "24.19.1",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
   },
