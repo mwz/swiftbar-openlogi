@@ -7,3 +7,4 @@
 - Bounded command execution, process cleanup and refresh coalescing.
 - Native menu rendering without a persistent battery cache.
 - Installer, uninstaller, automated tests and macOS/Linux CI.
+- Reproducible pnpm installs and mise-pinned Node 24 LTS development environment.

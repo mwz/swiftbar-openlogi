@@ -5,12 +5,14 @@
   "description": "Read-only OpenLogi battery indicator for SwiftBar",
   "type": "module",
   "license": "MIT",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
-    "test": "npm run build && vitest run",
-    "check": "npm run typecheck && npm test",
+    "test": "pnpm run build && vitest run",
+    "check": "pnpm run typecheck && pnpm test",
     "install-plugin": "node scripts/install.mjs",
     "uninstall-plugin": "node scripts/install.mjs --uninstall"
   },
@@ -18,5 +20,6 @@
     "@types/node": "22.19.17",
     "typescript": "5.9.3",
     "vitest": "4.1.11"
-  }
+  },
+  "packageManager": "pnpm@12.9.1"
 }

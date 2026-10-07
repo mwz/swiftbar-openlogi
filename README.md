@@ -22,11 +22,11 @@ plugin. Logi Options+ must not own the same HID++ receiver while OpenLogi reads 
 
 ## Install
 
-Install SwiftBar and Node if needed:
+Install SwiftBar and mise if needed:
 
 ```sh
 brew install --cask swiftbar
-brew install node
+brew install mise
 ```
 
 Open SwiftBar and select a plugin folder, for example `~/Documents/SwiftBar`.
@@ -35,9 +35,11 @@ Then clone this repository and install:
 ```sh
 git clone https://github.com/mwz/swiftbar-openlogi.git
 cd swiftbar-openlogi
-npm ci --ignore-scripts
-npm run check
-npm run install-plugin -- --plugin-dir "$HOME/Documents/SwiftBar"
+mise trust
+mise install
+mise exec -- pnpm install --frozen-lockfile --ignore-scripts
+mise exec -- pnpm run check
+mise exec -- pnpm run install-plugin --plugin-dir "$HOME/Documents/SwiftBar"
 ```
 
 Only `openlogi.5m.sh` is installed in that watched folder. Compiled application
@@ -58,7 +60,7 @@ user-local installations are supported. It does not search an inherited `PATH`.
 For any other location, supply an explicit absolute path:
 
 ```sh
-npm run install-plugin -- --plugin-dir "$HOME/Documents/SwiftBar" \
+mise exec -- pnpm run install-plugin --plugin-dir "$HOME/Documents/SwiftBar" \
   --openlogi "$HOME/tools/openlogi"
 ```
 
@@ -125,15 +127,16 @@ SwiftBar may retain rendered menus in its own diagnostic facilities.
 
 ## Update and remove
 
-Pull the latest code, run `npm ci --ignore-scripts`, then rerun the install
-command. Existing executable configuration is preserved unless explicitly
+Pull the latest code, run `mise install` and
+`mise exec -- pnpm install --frozen-lockfile --ignore-scripts`, then rerun the
+install command. Existing executable configuration is preserved unless explicitly
 overridden. Installation refuses to overwrite an unrelated `openlogi.5m.sh`.
 The launcher is replaced atomically. Reinstalling identical code reuses its
 compiled files; older code versions are retained until uninstall so in-flight
 queries are not disrupted.
 
 ```sh
-npm run uninstall-plugin -- --plugin-dir "$HOME/Documents/SwiftBar"
+mise exec -- pnpm run uninstall-plugin --plugin-dir "$HOME/Documents/SwiftBar"
 ```
 
 This removes only this plugin and its support files for that folder. It leaves
@@ -142,17 +145,32 @@ SwiftBar, Node, OpenLogi and other plugins installed.
 ## Development and verification
 
 ```sh
-npm ci --ignore-scripts
-npm run check
+mise trust
+mise install
+mise exec -- pnpm install --frozen-lockfile --ignore-scripts
+mise exec -- pnpm run check
 ```
+
+`mise.toml` pins **Node 24.21.0**, the latest LTS when this configuration was
+updated, and **pnpm 12.9.1**. The `packageManager` field in `package.json` pins the
+same pnpm version. Exact pins keep local development and CI reproducible; they
+do not silently switch to a newer Node release. The runtime still supports Node
+22 or later.
+
+With mise activated in your shell, you can use `pnpm` directly. `mise exec --`
+also works without shell activation. To deliberately update Node to the newest
+LTS, run `mise use --pin node@lts`, then commit the configuration change. Keep
+the pnpm version in `mise.toml` and `package.json` aligned when updating it.
 
 TypeScript builds to `dist/`. Tests cover parsing, limits, menu syntax, process
 cleanup, coalescing, stale sockets, installation, and the installed launcher.
-GitHub Actions runs the full suite on Linux and macOS with Node 22 and 24.
+GitHub Actions uses the same mise pins on Linux and macOS, and also tests Node 22
+compatibility. Dependency installation uses the committed `pnpm-lock.yaml` in
+frozen-lockfile mode.
 Synthetic tests do not require Logitech hardware.
 
 Some sandboxed execution environments prohibit Unix socket listening. Only in
-such an environment, `SWIFTBAR_SKIP_SOCKET_TESTS=1 npm run check` skips the four
+such an environment, `SWIFTBAR_SKIP_SOCKET_TESTS=1 mise exec -- pnpm run check` skips the four
 socket-dependent tests. A skipped run is not a substitute for the full CI suite.
 
 Before release, manually check SwiftBar on a Mac: Bolt/Bluetooth readings,

@@ -11,13 +11,19 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest]
-        node: [22, 24]
+        runtime: [project, node22]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v5.1.1
         with:
-          node-version: ${{ matrix.node }}
-          cache: npm
-      - run: npm ci --ignore-scripts
-      - run: npm run check
+          version: 2026.10.3
+      - name: Select Node 22 for compatibility checks
+        if: matrix.runtime == 'node22'
+        run: |
+          mise install node@22
+          echo 'MISE_NODE_VERSION=22' >> "$GITHUB_ENV"
+      - run: mise exec -- node --version
+      - run: mise exec -- pnpm --version
+      - run: mise exec -- pnpm install --frozen-lockfile --ignore-scripts
+      - run: mise exec -- pnpm run check
