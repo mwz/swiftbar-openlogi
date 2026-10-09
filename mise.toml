@@ -1,0 +1,4 @@
+[tools]
+# Latest LTS at the time of this pin; upgrade deliberately for reproducible builds.
+node = "24.21.0"
+pnpm = "12.9.1"

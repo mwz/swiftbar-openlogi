@@ -1,0 +1,29 @@
+name: Check
+on:
+  push:
+    branches: [main]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        runtime: [project, latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v6
+      - uses: jdx/mise-action@v5.1.1
+        with:
+          version: 2026.10.3
+      - name: Select the latest Node release for forward-compatibility checks
+        if: matrix.runtime == 'latest'
+        run: |
+          mise install node@latest
+          echo 'MISE_NODE_VERSION=latest' >> "$GITHUB_ENV"
+      - run: mise exec -- node --version
+      - run: mise exec -- pnpm --version
+      - run: mise exec -- pnpm install --frozen-lockfile --ignore-scripts
+      - run: mise exec -- pnpm run check
