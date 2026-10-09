@@ -1,9 +1,11 @@
-# OpenLogi Batteries for SwiftBar
+# <img src="assets/logo.png" width="52" height="52" alt="OpenLogi Batteries logo"> OpenLogi Batteries for SwiftBar
 
 A read-only macOS menu bar plugin showing peripheral battery levels from the
 [OpenLogi CLI](https://github.com/AprilNEA/OpenLogi), hosted by
-[SwiftBar](https://github.com/swiftbar/SwiftBar). No Raycast dependency, AI
-integration, analytics, account or remote service is used by this plugin.
+[SwiftBar](https://github.com/swiftbar/SwiftBar). The plugin uses no analytics,
+accounts or remote services.
+
+![OpenLogi Batteries menu in SwiftBar](assets/screenshot.png)
 
 The menu bar shows the lowest readable battery percentage among connected
 devices. Click it for an alphabetically sorted list of devices, their connection
@@ -15,10 +17,12 @@ types, battery percentages and charging states.
 - Node.js 24 or later (local development uses the LTS version pinned in mise).
 - A working standalone `openlogi` executable supporting `openlogi list`.
 
-The OpenLogi desktop app does not necessarily install the standalone CLI.
-Use the [OpenLogi development guide](https://github.com/AprilNEA/OpenLogi/blob/master/docs/DEVELOPMENT.md)
+The OpenLogi desktop app does not necessarily install the standalone CLI. Use
+the
+[OpenLogi development guide](https://github.com/AprilNEA/OpenLogi/blob/master/docs/DEVELOPMENT.md)
 if you need to build it. Confirm `openlogi list` works before installing this
-plugin. Logi Options+ must not own the same HID++ receiver while OpenLogi reads it.
+plugin. Logi Options+ must not own the same HID++ receiver while OpenLogi reads
+it.
 
 ## Install
 
@@ -44,8 +48,9 @@ mise exec -- pnpm run install-plugin --plugin-dir "$HOME/Documents/SwiftBar"
 
 Only `openlogi.5m.sh` is installed in that watched folder. Compiled application
 files and configuration live under
-`~/Library/Application Support/swiftbar-openlogi/`. The installed plugin does not
-need this checkout or `node_modules` at runtime; it uses only Node built-ins.
+`~/Library/Application Support/swiftbar-openlogi/`. The installed plugin does
+not need this checkout or `node_modules` at runtime; it uses only Node
+built-ins.
 
 Choose **Refresh All** in SwiftBar. Enable **Launch at Login** in SwiftBar if
 desired. Use SwiftBar's plugin controls to disable/re-enable this plugin without
@@ -77,17 +82,17 @@ installer. A missing Node runtime is reported in the menu.
 
 ## Behaviour
 
-| Situation | Result |
-| --- | --- |
-| Multiple devices | Lowest readable percentage; alphabetical tie-break |
-| Dropdown | All online devices, alphabetically sorted |
-| Unknown battery | “Battery unavailable”; excluded from minimum |
-| Charging | Charging label, and a charging menu bar icon when that device is the minimum |
-| No readable online batteries | Item hidden, including camera-only inventories |
-| Missing CLI, failed command, bad data or timeout | `?` and a concise error; no partial inventory |
-| Refresh | Startup, every five minutes and the Refresh action |
-| Menu opening | Immediate; shows the latest completed refresh without rerunning the CLI |
-| Refresh in progress | Previous completed SwiftBar display remains visible |
+| Situation                                        | Result                                                                       |
+| ------------------------------------------------ | ---------------------------------------------------------------------------- |
+| Multiple devices                                 | Lowest readable percentage; alphabetical tie-break                           |
+| Dropdown                                         | All online devices, alphabetically sorted                                    |
+| Unknown battery                                  | “Battery unavailable”; excluded from minimum                                 |
+| Charging                                         | Charging label, and a charging menu bar icon when that device is the minimum |
+| No readable online batteries                     | Item hidden, including camera-only inventories                               |
+| Missing CLI, failed command, bad data or timeout | `?` and a concise error; no partial inventory                                |
+| Refresh                                          | Startup, every five minutes and the Refresh action                           |
+| Menu opening                                     | Immediate; shows the latest completed refresh without rerunning the CLI      |
+| Refresh in progress                              | Previous completed SwiftBar display remains visible                          |
 
 Mouse, trackball, keyboard, numpad, touchpad, headset, gamepad and joystick use
 native SF Symbols; unknown types use a battery icon. Rows show Logi Bolt,
@@ -97,8 +102,8 @@ infers the current transport just from a device's supported transports.
 
 The script emits a complete menu once per query. It does not print an interim
 blank/loading menu or keep a persistent battery cache. SwiftBar may show its own
-initial placeholder on launch. Failures replace the previous reading with `?`;
-a successful empty inventory deliberately hides the item. SwiftBar handles
+initial placeholder on launch. Failures replace the previous reading with `?`; a
+successful empty inventory deliberately hides the item. SwiftBar handles
 sleep/wake scheduling and can refresh overdue plugins after waking.
 
 ## Execution and data handling
@@ -112,7 +117,8 @@ sleep/wake scheduling and can refresh overdue plugins after waking.
   2,048 per line, 24 devices including offline devices, 256-character names,
   64-character kind/WPID fields and 256-character battery fields. Slots must be
   0–255; percentages must be whole numbers from 0–100. Malformed numeric battery
-  values reject the entire inventory; unavailable battery text remains supported.
+  values reject the entire inventory; unavailable battery text remains
+  supported.
 - Non-empty output must contain recognised device rows, inventory headers, a
   camera section or the explicit no-hardware message. Unrecognised output is an
   error rather than a hidden item; empty output remains an empty inventory.
@@ -121,7 +127,8 @@ sleep/wake scheduling and can refresh overdue plugins after waking.
   is recovered on the next refresh. There is no background daemon or TCP port.
 - The command receives a small environment (`PATH`, `LC_ALL`, `HOME` and, when
   present, `TMPDIR`) and runs from `/`. macOS user paths are retained for agent
-  discovery; Linux `/run/user` paths and root-only executable rules are not used.
+  discovery; Linux `/run/user` paths and root-only executable rules are not
+  used.
 - Names/errors are sanitised for SwiftBar syntax. Only fixed application code
   defines menu actions. The plugin does not save CLI output or battery readings,
   send network requests, change device settings or request administrator access.
@@ -134,11 +141,11 @@ SwiftBar may retain rendered menus in its own diagnostic facilities.
 
 Pull the latest code, run `mise install` and
 `mise exec -- pnpm install --frozen-lockfile --ignore-scripts`, then rerun the
-install command. Existing executable configuration is preserved unless explicitly
-overridden. Installation refuses to overwrite an unrelated `openlogi.5m.sh`.
-The launcher is replaced atomically. Reinstalling identical code reuses its
-compiled files; older code versions are retained until uninstall so in-flight
-queries are not disrupted.
+install command. Existing executable configuration is preserved unless
+explicitly overridden. Installation refuses to overwrite an unrelated
+`openlogi.5m.sh`. The launcher is replaced atomically. Reinstalling identical
+code reuses its compiled files; older code versions are retained until uninstall
+so in-flight queries are not disrupted.
 
 ```sh
 mise exec -- pnpm run uninstall-plugin --plugin-dir "$HOME/Documents/SwiftBar"
@@ -157,10 +164,10 @@ mise exec -- pnpm run check
 ```
 
 `mise.toml` pins **Node 24.21.0**, the latest LTS when this configuration was
-updated, and **pnpm 12.9.1**. The `packageManager` field in `package.json` pins the
-same pnpm version. Exact pins keep local development and CI reproducible; they
-do not silently switch to a newer Node release. The runtime still supports Node
-24 or later.
+updated, and **pnpm 12.9.1**. The `packageManager` field in `package.json` pins
+the same pnpm version. Exact pins keep local development and CI reproducible;
+they do not silently switch to a newer Node release. The runtime still supports
+Node 24 or later.
 
 With mise activated in your shell, you can use `pnpm` directly. `mise exec --`
 also works without shell activation. To deliberately update Node to the newest
@@ -173,12 +180,12 @@ GitHub Actions uses the same mise pins on Linux and macOS, and also tests the
 latest stable Node release using `node@latest` for forward compatibility. The
 latest-release jobs follow new releases automatically, without changing the
 local LTS pin. Dependency installation uses the committed `pnpm-lock.yaml` in
-frozen-lockfile mode.
-Synthetic tests do not require Logitech hardware.
+frozen-lockfile mode. Synthetic tests do not require Logitech hardware.
 
 Some sandboxed execution environments prohibit Unix socket listening. Only in
-such an environment, `SWIFTBAR_SKIP_SOCKET_TESTS=1 mise exec -- pnpm run check` skips the four
-socket-dependent tests. A skipped run is not a substitute for the full CI suite.
+such an environment, `SWIFTBAR_SKIP_SOCKET_TESTS=1 mise exec -- pnpm run check`
+skips the four socket-dependent tests. A skipped run is not a substitute for the
+full CI suite.
 
 Before release, manually check SwiftBar on a Mac: Bolt/Bluetooth readings,
 charging, disconnect/reconnect, menu refresh without flicker, slow-query menu
@@ -187,11 +194,14 @@ hardware cannot be established by the synthetic tests.
 
 ## Alignment and licence
 
-Ported from the MIT-licensed [Raycast implementation](https://github.com/mwz/openlogi-raycast/tree/d5905d1b825ced7ae425769dd667b2dea8147b80),
-with bounds and process-supervision behaviour aligned to
-[Omarchy 0.4.0](https://github.com/mwz/openlogi-battery-omarchy/tree/8eff09cfeb3a21b588c8b1301e0bc4bbf692ed7f).
+Ported from the MIT-licensed
+[openlogi-raycast](https://github.com/mwz/openlogi-raycast), with bounds and
+process-supervision behaviour aligned to
+[openlogi-battery-omarchy 0.4.0](https://github.com/mwz/openlogi-battery-omarchy).
 The CLI text format remains an upstream compatibility dependency; a future
 machine-readable interface can replace the parser without changing the menu.
 
 Independent community project, not affiliated with Logitech, OpenLogi or
-SwiftBar. [MIT licence](LICENSE).
+SwiftBar.
+
+[MIT licence](LICENSE)
