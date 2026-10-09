@@ -11,7 +11,7 @@ types, battery percentages and charging states.
 
 ## Requirements
 
-- macOS 12 or later and SwiftBar 2.1.1 or later.
+- macOS 13.5 or later (required by Node.js 24) and SwiftBar 2.1.1 or later.
 - Node.js 24 or later (local development uses the LTS version pinned in mise).
 - A working standalone `openlogi` executable supporting `openlogi list`.
 
@@ -111,7 +111,11 @@ sleep/wake scheduling and can refresh overdue plugins after waking.
 - Parser bounds match the Omarchy plugin: 65,536 UTF-16 code units, 1,024 lines,
   2,048 per line, 24 devices including offline devices, 256-character names,
   64-character kind/WPID fields and 256-character battery fields. Slots must be
-  0–255; percentages must be 0–100.
+  0–255; percentages must be whole numbers from 0–100. Malformed numeric battery
+  values reject the entire inventory; unavailable battery text remains supported.
+- Non-empty output must contain recognised device rows, inventory headers, a
+  camera section or the explicit no-hardware message. Unrecognised output is an
+  error rather than a hidden item; empty output remains an empty inventory.
 - Concurrent plugin invocations share the in-flight result over a private local
   Unix socket. The socket is removed on completion; a stale socket after a crash
   is recovered on the next refresh. There is no background daemon or TCP port.

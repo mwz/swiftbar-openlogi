@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Report unrecognised CLI output and malformed numeric battery readings as errors
+  instead of hiding the plugin or displaying a partial inventory.
+- Correct the minimum macOS version to 13.5 for Node.js 24.
+
 ## 0.1.1
 
 - Open the menu immediately using the latest completed result instead of

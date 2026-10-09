@@ -112,6 +112,9 @@ function parseDeviceLine(line: string, order: number): DeviceLineResult {
 
   const batteryText = detail[4].trim();
   const percentageMatch = batteryText.match(/^(\d{1,3})%(?:\s|$)/);
+  // Unknown text is allowed, but a broken numeric reading must not masquerade
+  // as an unavailable battery and allow a partial inventory through.
+  if (!percentageMatch && /%|^[+\-−]?(?:\d|\.\d)/.test(batteryText)) return { malformed: true, line };
   const percentage = percentageMatch ? Number(percentageMatch[1]) : null;
   if (percentage !== null && percentage > 100) return { malformed: true, line };
 
@@ -197,11 +200,20 @@ export function parseList(output: string): ParseListResult {
   let order = 0;
   let currentParent: InventoryParent | null = null;
   let lastDevice: OpenLogiDevice | null = null;
+  const noHardware = lines.some(line => line.trim() === NO_HARDWARE_MESSAGE);
+  let recognisedInventory = noHardware;
 
   for (const line of lines) {
+    if (/^Cameras \(\d+ Logitech UVC\)$/.test(line.trim())) {
+      recognisedInventory = true;
+      currentParent = null;
+      lastDevice = null;
+      continue;
+    }
     const header = parseInventoryHeader(line);
     if (header) {
       if (header.name.length > LIMITS.name) return invalid("OpenLogi parent name exceeded the parser limit");
+      recognisedInventory = true;
       currentParent = header;
       lastDevice = null;
       continue;
@@ -214,6 +226,7 @@ export function parseList(output: string): ParseListResult {
         malformed.push(parsed.line);
         lastDevice = null;
       } else {
+        recognisedInventory = true;
         if (devices.length >= LIMITS.devices) return invalid("OpenLogi returned more than 24 devices");
         const connectionKind = connectionFromParent(currentParent, parsed.slot);
         lastDevice = {
@@ -243,9 +256,13 @@ export function parseList(output: string): ParseListResult {
     };
   }
 
+  // Preserve empty inventories and auxiliary CLI notes, but do not silently
+  // hide the plugin when none of a non-empty response is an inventory.
+  if (text.trim() && !recognisedInventory) return invalid("Unsupported openlogi list output");
+
   return {
     ok: true,
-    noHardware: text.includes(NO_HARDWARE_MESSAGE),
+    noHardware,
     devices,
   };
 }

@@ -9,11 +9,11 @@ const result = (output: string) => interpret({ stdout: output, stderr: '', exitC
 
 describe('Omarchy input limits', () => {
   it('enforces total, line and line-count bounds', () => {
-    expect(parseList('x'.repeat(LIMITS.line)).ok).toBe(true);
-    expect(parseList('x'.repeat(LIMITS.line + 1)).ok).toBe(false);
+    expect(parseList(row().padEnd(LIMITS.line)).ok).toBe(true);
+    expect(parseList(row().padEnd(LIMITS.line + 1)).ok).toBe(false);
     expect(parseList('\n'.repeat(LIMITS.lines - 1)).ok).toBe(true);
     expect(parseList('\n'.repeat(LIMITS.lines)).ok).toBe(false);
-    const exact = ('x'.repeat(2047) + '\n').repeat(32);
+    const exact = row().padEnd(2047) + '\n' + (' '.repeat(2047) + '\n').repeat(31);
     expect(exact.length).toBe(LIMITS.output);
     expect(parseList(exact).ok).toBe(true);
     expect(parseList(exact + 'x').ok).toBe(false);
@@ -59,6 +59,12 @@ describe('menu behaviour', () => {
   it('hides an empty inventory and one with no readable batteries', () => {
     expect(render(result(''))).toBe('');
     expect(render(result(row('Unknown', '—')))).toBe('');
+    expect(render(result('Cameras (1 Logitech UVC)\n └─ ● Brio (camera, vid=0000 pid=0004, id=1)'))).toBe('');
+  });
+  it.each(['Unexpected output format', row() + '\n' + row('Bad', '-1%')])('renders invalid output as an error rather than hiding or showing a partial reading', output => {
+    const menu = render(result(output));
+    expect(menu).toMatch(/^\?/);
+    expect(menu).not.toContain('72%');
   });
   it('displays failure instead of partial readings and limits errors', () => {
     const state = interpret({ stdout: row(), stderr: 'x'.repeat(300), exitCode: 1 });

@@ -144,6 +144,28 @@ describe("OpenLogi list parser", () => {
     expect(parsed).toMatchObject({ ok: true, noHardware: true, devices: [] });
   });
 
+  it.each([
+    "Unexpected output format",
+    "Usage: openlogi list [OPTIONS]",
+    "(inventory read from the running agent)",
+    "Warning: No Logitech HID++ devices or webcams found. Please retry.",
+  ])("rejects unrecognised non-empty output: %s", output => {
+    expect(parseList(output)).toMatchObject({ ok: false, devices: [], error: "Unsupported openlogi list output" });
+  });
+
+  it.each([
+    "", " \r\n\t",
+    "Logi Bolt Receiver (—, vid=046d pid=c548)",
+    "Cameras (0 Logitech UVC)",
+  ])("preserves supported empty inventories: %j", output => {
+    expect(parseList(output)).toMatchObject({ ok: true, devices: [] });
+  });
+
+  it("allows auxiliary notes around a recognised inventory", () => {
+    const output = ["(inventory read from the running agent)", deviceLine("Mouse", "mouse", "72%"), "Notes:", " - Device information may be cached"].join("\n");
+    expect(parseList(output)).toMatchObject({ ok: true, devices: [{ name: "Mouse", percentage: 72 }] });
+  });
+
   it("ignores camera-only output", () => {
     const parsed = parseList("Cameras (1 Logitech UVC)\n └─ ● Brio (camera, vid=0000 pid=0004, id=1)");
     expect(parsed).toMatchObject({ ok: true, noHardware: false, devices: [] });
@@ -162,7 +184,14 @@ describe("OpenLogi list parser", () => {
     });
   });
 
-  it("fails closed for an out-of-range percentage", () => {
-    expect(parseList(deviceLine("Impossible Mouse", "mouse", "101% full (charging)")).ok).toBe(false);
+  it.each(["101% full (charging)", "-1%", "−1%", "1000%", "99.5%", "+50%", ".5%", "50 %", "50%bad", "50", "NaN%"])("rejects malformed battery %s without partial readings", battery => {
+    const output = [deviceLine("Known Mouse", "mouse", "72%"), deviceLine("Invalid Mouse", "mouse", battery)].join("\n");
+    expect(parseList(output)).toMatchObject({ ok: false, devices: [] });
+  });
+
+  it.each(["—", "unknown", "unavailable"])("preserves unavailable battery text: %s", battery => {
+    expect(parseList(deviceLine("Mouse", "mouse", battery))).toMatchObject({
+      ok: true, devices: [{ batteryAvailable: false, percentage: null }],
+    });
   });
 });
