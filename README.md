@@ -85,7 +85,8 @@ installer. A missing Node runtime is reported in the menu.
 | Charging | Charging label, and a charging menu bar icon when that device is the minimum |
 | No readable online batteries | Item hidden, including camera-only inventories |
 | Missing CLI, failed command, bad data or timeout | `?` and a concise error; no partial inventory |
-| Refresh | Startup, every five minutes, menu opening and the Refresh action |
+| Refresh | Startup, every five minutes and the Refresh action |
+| Menu opening | Immediate; shows the latest completed refresh without rerunning the CLI |
 | Refresh in progress | Previous completed SwiftBar display remains visible |
 
 Mouse, trackball, keyboard, numpad, touchpad, headset, gamepad and joystick use

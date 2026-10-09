@@ -93,7 +93,6 @@ async function main() {
     '# <xbar.desc>Read-only local device battery levels from OpenLogi.</xbar.desc>',
     '# <xbar.dependencies>node,openlogi</xbar.dependencies>',
     '# <xbar.var>string(OPENLOGI_PATH=""): Optional absolute OpenLogi CLI path.</xbar.var>',
-    '# <swiftbar.refreshOnOpen>true</swiftbar.refreshOnOpen>',
     '# <swiftbar.runInBash>false</swiftbar.runInBash>',
     // Node must not inherit interpreter injection settings from a login shell.
     'unset NODE_OPTIONS NODE_PATH DYLD_INSERT_LIBRARIES DYLD_LIBRARY_PATH LD_PRELOAD',

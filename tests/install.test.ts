@@ -19,7 +19,7 @@ it('installs and updates paths with shell metacharacters, preserves config and u
     const launcher = path.join(plugins, 'openlogi.5m.sh');
     const script = await readFile(launcher, 'utf8');
     execFileSync('/bin/sh', ['-n', launcher]);
-    expect(script).toContain('swiftbar.refreshOnOpen');
+    expect(script).not.toContain('swiftbar.refreshOnOpen');
     expect(script).toContain('unset NODE_OPTIONS');
     expect(script).not.toContain('npm');
     expect(await readdir(plugins)).toEqual(['openlogi.5m.sh']);
