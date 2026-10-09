@@ -197,8 +197,8 @@ hardware cannot be established by the synthetic tests.
 Ported from the MIT-licensed
 [openlogi-raycast](https://github.com/mwz/openlogi-raycast), with bounds and
 process-supervision behaviour aligned to
-[openlogi-battery-omarchy 0.4.0](https://github.com/mwz/openlogi-battery-omarchy).
-The CLI text format remains an upstream compatibility dependency; a future
+[openlogi-battery-omarchy](https://github.com/mwz/openlogi-battery-omarchy). The
+CLI text format remains an upstream compatibility dependency; a future
 machine-readable interface can replace the parser without changing the menu.
 
 Independent community project, not affiliated with Logitech, OpenLogi or
