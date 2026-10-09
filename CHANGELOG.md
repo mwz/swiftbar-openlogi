@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1
+
+- Open the menu immediately using the latest completed result instead of
+  blocking while `openlogi list` runs; five-minute and manual refreshes remain
+  available.
+
 ## 0.1.0
 
 - Initial SwiftBar integration using the OpenLogi CLI.
